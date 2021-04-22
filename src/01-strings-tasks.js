@@ -1,11 +1,9 @@
-
 /* *******************************************************************************************
  *                                                                                           *
  * Plese read the following tutorial before implementing tasks:                              *
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String   *
  *                                                                                           *
  ******************************************************************************************* */
-
 
 /**
  * Returns the result of concatenation of two strings.
@@ -22,7 +20,6 @@
 function concatenateStrings(value1, value2) {
   return value1 + value2;
 }
-
 
 /**
  * Returns the length of given string.
@@ -67,10 +64,8 @@ function getStringFromTemplate(firstName, lastName) {
  *   'Hello, Chuck Norris!' => 'Chuck Norris'
  */
 function extractNameFromTemplate(value) {
-  const arr = value.split(' ');
-  return `${arr[1]} ${arr[2].slice(0, arr[2].length - 1)}`;
+  return value.slice(7, -1);
 }
-
 
 /**
  * Returns a first char of the given string.
@@ -83,7 +78,7 @@ function extractNameFromTemplate(value) {
  *   'cat'       => 'c'
  */
 function getFirstChar(value) {
-  return value[0];
+  return value.charAt(0);
 }
 
 /**
@@ -113,7 +108,7 @@ function removeLeadingAndTrailingWhitespaces(value) {
  *   'cat', 3 => 'catcatcat'
  */
 function repeatString(value, count) {
-  return value.repeat(count);
+  return value.repeat(Number(count));
 }
 
 /**
@@ -146,7 +141,6 @@ function removeFirstOccurrences(str, value) {
 function unbracketTag(str) {
   return str.slice(1, -1);
 }
-
 
 /**
  * Converts all characters of the specified string into the upper case
@@ -204,10 +198,13 @@ function extractEmails(str) {
  *             '└──────────┘\n'
  *
  */
-function getRectangleString(/* width, height */) {
-  throw new Error('Not implemented');
+function getRectangleString(width, height) {
+  const header = `┌${'─'.repeat(width - 2)}┐\n`;
+  const body =
+    height > 2 ? `│${' '.repeat(width - 2)}│\n`.repeat(height - 2) : '';
+  const footer = `└${'─'.repeat(width - 2)}┘\n`;
+  return header + body + footer;
 }
-
 
 /**
  * Encode specified string with ROT13 cipher
@@ -226,18 +223,25 @@ function getRectangleString(/* width, height */) {
  *
  */
 function encodeToRot13(str) {
-  const res = str.split('');
-
-  for (let i = 0; i < res.length; i += 1) {
-    if (res[i].match(/[A-Z]/)) {
-      res[i] = String.fromCharCode(((res[i].charCodeAt() - 65 + 13) % 26) + 65);
+  const encode = (charCode) => {
+    if (
+      (charCode >= 65 && charCode <= 77) ||
+      (charCode >= 97 && charCode <= 109)
+    ) {
+      return String.fromCharCode(charCode + 13);
     }
-    if (res[i].match(/[a-z]/)) {
-      res[i] = String.fromCharCode(((res[i].charCodeAt() - 97 + 13) % 26) + 97);
+    if (
+      (charCode >= 78 && charCode <= 90) ||
+      (charCode >= 110 && charCode <= 122)
+    ) {
+      return String.fromCharCode(charCode - 13);
     }
-  }
-
-  return res.join('');
+    return String.fromCharCode(charCode);
+  };
+  return str
+    .split('')
+    .map((char) => encode(char.charCodeAt(0)))
+    .join('');
 }
 
 /**
@@ -254,18 +258,13 @@ function encodeToRot13(str) {
  *   isString(new String('test')) => true
  */
 function isString(value) {
-  if (typeof value === 'string' || value instanceof String) {
-    return true;
-  }
-
-  return false;
+  return value != null && typeof value.valueOf() === 'string';
 }
-
 
 /**
  * Returns playid card id.
  *
- * Playing cards inittial deck inclides the cards in the following order:
+ * Playing cards initial deck includes the cards in the following order:
  *
  *  'A♣','2♣','3♣','4♣','5♣','6♣','7♣','8♣','9♣','10♣','J♣','Q♣','K♣',
  *  'A♦','2♦','3♦','4♦','5♦','6♦','7♦','8♦','9♦','10♦','J♦','Q♦','K♦',
@@ -287,29 +286,26 @@ function isString(value) {
  *   'K♠' => 51
  */
 function getCardId(value) {
-  const idCard = value.slice(0, value.length - 1);
-  const valueCard = value.slice(value.length - 1);
-  let col;
-  let row;
-  if (idCard === 'A') {
-    col = 1;
-  } else if (idCard === 'J') {
-    col = 11;
-  } else if (idCard === 'Q') {
-    col = 12;
-  } else if (idCard === 'K') {
-    col = 13;
-  } else {
-    col = idCard;
-  }
-  if (valueCard === '♣') row = 1;
-  if (valueCard === '♦') row = 2;
-  if (valueCard === '♥') row = 3;
-  if (valueCard === '♠') row = 4;
-  const result = col - 1 + (row - 1) * 13;
-  return result;
+  const SUITS = ['♣', '♦', '♥', '♠'];
+  const RANKS = [
+    'A',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    'J',
+    'Q',
+    'K',
+  ];
+  const suit = value.slice(-1);
+  const rank = value.slice(0, -1);
+  return SUITS.indexOf(suit) * RANKS.length + RANKS.indexOf(rank);
 }
-
 
 module.exports = {
   concatenateStrings,
